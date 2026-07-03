@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 import toast from 'react-hot-toast';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   FaArrowRight,
   FaCalendarCheck,
@@ -9,18 +10,42 @@ import {
   FaLock,
 } from 'react-icons/fa';
 
-const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
+import { useAuth } from '../contexts/useAuth';
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+const Login = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
+  const { currentUser, login } = useAuth();
+  const navigate = useNavigate();
+
+  if (currentUser) {
+    return <Navigate replace to='/' />;
+  }
+
+  const handleLogin = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.success('Prijava uspešna.');
+
+    if (!email.trim() || !password.trim()) {
+      toast.error('Unesite email adresu i lozinku pre prijave.');
+      return;
+    }
+
+    const loggedInUser = login(email, password);
+
+    if (!loggedInUser) {
+      toast.error('Korisnik sa unetim podacima ne postoji.');
+      return;
+    }
+
+    toast.success(`Dobrodošli, ${loggedInUser.name}!`);
+    navigate('/');
   };
 
   return (
     <main className='flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-indigo-500 via-violet-500 to-amber-100 px-4 py-6 text-slate-900 sm:px-6'>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleLogin}
         className='w-full max-w-md rounded-3xl border border-white bg-white p-6 shadow-2xl shadow-indigo-900/20 sm:p-8 lg:p-10'
       >
         <div className='mb-8 flex items-center gap-3'>
@@ -40,33 +65,37 @@ const Login = () => {
         </div>
 
         <div className='space-y-5'>
-          <label className='block'>
+          <label className='block' htmlFor='login-email'>
             <span className='mb-2 block text-sm font-semibold text-slate-900'>
               Email adresa
             </span>
             <span className='relative block'>
               <FaEnvelope className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400' />
               <input
+                id='login-email'
                 type='email'
                 name='email'
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder='Unesite email adresu'
-                required
                 className='h-12 w-full rounded-xl border-2 border-slate-200 bg-indigo-50 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 sm:text-base'
               />
             </span>
           </label>
 
-          <label className='block'>
+          <label className='block' htmlFor='login-password'>
             <span className='mb-2 block text-sm font-semibold text-slate-900'>
               Lozinka
             </span>
             <span className='relative block'>
               <FaLock className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400' />
               <input
+                id='login-password'
                 type={showPassword ? 'text' : 'password'}
                 name='password'
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
                 placeholder='Unesite lozinku'
-                required
                 className='h-12 w-full rounded-xl border-2 border-slate-200 bg-indigo-50 py-3 pl-11 pr-12 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 sm:text-base'
               />
               <button

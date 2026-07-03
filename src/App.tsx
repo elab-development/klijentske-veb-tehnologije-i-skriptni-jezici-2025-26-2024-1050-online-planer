@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
+import { AuthProvider } from './contexts/AuthProvider';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Planners from './pages/Planners';
@@ -8,8 +9,8 @@ import Stats from './pages/Stats';
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Toaster
           position='bottom-right'
           toastOptions={{
@@ -33,8 +34,8 @@ function App() {
           <Route path='/planners' element={<Planners />} />
           <Route path='/stats' element={<Stats />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
