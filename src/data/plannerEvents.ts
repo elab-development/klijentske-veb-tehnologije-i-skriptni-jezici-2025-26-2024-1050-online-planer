@@ -1,0 +1,86 @@
+import type { PlannerEventProps } from '../types/PlannerEvent';
+
+const seedTimestamp = '2026-06-01T08:00:00.000Z';
+
+export const predefinedPlannerEvents: readonly PlannerEventProps[] = [
+  {
+    id: 'seed-user-1-lecture',
+    userId: 1,
+    title: 'Predavanje - Distribuirani sistemi',
+    dateTime: '2026-06-05T10:00',
+    categoryId: 'study',
+    note: 'Poneti beleske sa prethodnog casa.',
+    isCompleted: false,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-1-seminar',
+    userId: 1,
+    title: 'Pisanje seminarskog rada',
+    dateTime: '2026-06-05T13:00',
+    categoryId: 'work',
+    note: 'Zavrsiti trecu sekciju.',
+    isCompleted: false,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-1-groceries',
+    userId: 1,
+    title: 'Kupovina namirnica',
+    dateTime: '2026-06-05T17:00',
+    categoryId: 'personal',
+    note: '',
+    isCompleted: false,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-2-training',
+    userId: 2,
+    title: 'Jutarnje vezbanje',
+    dateTime: '2026-06-06T07:30',
+    categoryId: 'health',
+    note: 'Kratak kardio trening.',
+    isCompleted: true,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-2-project',
+    userId: 2,
+    title: 'Sastanak sa timom za projekat',
+    dateTime: '2026-06-06T18:30',
+    categoryId: 'social',
+    note: 'Dogovor oko podele zadataka.',
+    isCompleted: false,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-3-emails',
+    userId: 3,
+    title: 'Odgovoriti na emailove',
+    dateTime: '2026-06-07T08:30',
+    categoryId: 'work',
+    note: 'Prioritet su poruke vezane za fakultet.',
+    isCompleted: true,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+  {
+    id: 'seed-user-3-exam',
+    userId: 3,
+    title: 'Ponavljanje za ispit',
+    dateTime: '2026-06-07T20:00',
+    categoryId: 'study',
+    note: 'Proci zadatke iz zbirke.',
+    isCompleted: false,
+    createdAt: seedTimestamp,
+    updatedAt: seedTimestamp,
+  },
+];
+
+export const getPredefinedEventsForUser = (userId: number) =>
+  predefinedPlannerEvents.filter((event) => event.userId === userId);
