@@ -1,16 +1,24 @@
 import type { PlannerEvent } from '../../models/PlannerEvent';
-import { getMonthGridDays, monthWeekdays, toDateKey } from '../../utils/plannerDate';
+import type { HolidaysByDate } from '../../utils/holidayUtils';
+import {
+  getMonthGridDays,
+  monthWeekdays,
+  toDateKey,
+} from '../../utils/plannerDate';
 import type { EventsByDate } from '../../utils/plannerTypes';
 import EventCard from './EventCard';
+import HolidayList from './HolidayList';
 
 interface MonthlyPlannerViewProps {
   eventsByDate: EventsByDate;
+  holidaysByDate: HolidaysByDate;
   referenceDate: Date;
   onToggleEvent: (event: PlannerEvent) => void;
 }
 
 const MonthlyPlannerView = ({
   eventsByDate,
+  holidaysByDate,
   referenceDate,
   onToggleEvent,
 }: MonthlyPlannerViewProps) => {
@@ -35,6 +43,7 @@ const MonthlyPlannerView = ({
           {monthDays.map((date) => {
             const dateKey = toDateKey(date);
             const dayEvents = eventsByDate[dateKey] ?? [];
+            const dayHolidays = holidaysByDate[dateKey] ?? [];
             const isCurrentMonth =
               date.getMonth() === referenceDate.getMonth();
             const isToday = dateKey === todayKey;
@@ -66,6 +75,8 @@ const MonthlyPlannerView = ({
                   ) : null}
                 </header>
 
+                <HolidayList compact holidays={dayHolidays} />
+
                 <div className='space-y-2'>
                   {dayEvents.slice(0, 3).map((event) => (
                     <EventCard
@@ -92,4 +103,3 @@ const MonthlyPlannerView = ({
 };
 
 export default MonthlyPlannerView;
-

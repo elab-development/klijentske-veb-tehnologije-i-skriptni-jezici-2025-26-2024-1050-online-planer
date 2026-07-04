@@ -1,16 +1,24 @@
 import type { PlannerEvent } from '../../models/PlannerEvent';
-import { getWeekDays, toDateKey, weekdayFormatter } from '../../utils/plannerDate';
+import type { HolidaysByDate } from '../../utils/holidayUtils';
+import {
+  getWeekDays,
+  toDateKey,
+  weekdayFormatter,
+} from '../../utils/plannerDate';
 import type { EventsByDate } from '../../utils/plannerTypes';
 import EventCard from './EventCard';
+import HolidayList from './HolidayList';
 
 interface WeeklyPlannerViewProps {
   eventsByDate: EventsByDate;
+  holidaysByDate: HolidaysByDate;
   referenceDate: Date;
   onToggleEvent: (event: PlannerEvent) => void;
 }
 
 const WeeklyPlannerView = ({
   eventsByDate,
+  holidaysByDate,
   referenceDate,
   onToggleEvent,
 }: WeeklyPlannerViewProps) => {
@@ -22,6 +30,7 @@ const WeeklyPlannerView = ({
       {weekDays.map((date) => {
         const dateKey = toDateKey(date);
         const dayEvents = eventsByDate[dateKey] ?? [];
+        const dayHolidays = holidaysByDate[dateKey] ?? [];
         const isToday = dateKey === todayKey;
 
         return (
@@ -48,8 +57,10 @@ const WeeklyPlannerView = ({
               </span>
             </header>
 
+            <HolidayList compact holidays={dayHolidays} />
+
             {dayEvents.length ? (
-              <div className='space-y-3'>
+              <div className='mt-3 space-y-3'>
                 {dayEvents.map((event) => (
                   <EventCard
                     compact
@@ -60,7 +71,7 @@ const WeeklyPlannerView = ({
                 ))}
               </div>
             ) : (
-              <p className='rounded-xl border border-dashed border-slate-200 px-3 py-4 text-center text-sm text-slate-400'>
+              <p className='mt-3 rounded-xl border border-dashed border-slate-200 px-3 py-4 text-center text-sm text-slate-400'>
                 Slobodan dan
               </p>
             )}
@@ -72,4 +83,3 @@ const WeeklyPlannerView = ({
 };
 
 export default WeeklyPlannerView;
-

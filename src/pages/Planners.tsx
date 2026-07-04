@@ -8,8 +8,10 @@ import PlannerViewTabs from '../components/planners/PlannerViewTabs';
 import WeeklyPlannerView from '../components/planners/WeeklyPlannerView';
 import { useAuth } from '../contexts/useAuth';
 import { eventCategoryIds } from '../data/eventCategories';
+import { usePublicHolidays } from '../hooks/usePublicHolidays';
 import type { PlannerEvent } from '../models/PlannerEvent';
 import { plannerEventStorage } from '../services/PlannerEventStorage';
+import { getHolidaysByDate, getHolidayYears } from '../utils/holidayUtils';
 import {
   addDays,
   addMonths,
@@ -51,6 +53,15 @@ const Planners = () => {
   const visibleDateKeys = useMemo(
     () => new Set(visibleDates.map(toDateKey)),
     [visibleDates],
+  );
+  const visibleHolidayYears = useMemo(
+    () => getHolidayYears(visibleDates),
+    [visibleDates],
+  );
+  const holidays = usePublicHolidays(visibleHolidayYears);
+  const holidaysByDate = useMemo(
+    () => getHolidaysByDate(holidays),
+    [holidays],
   );
 
   const visibleEventsWithoutCategoryFilter = useMemo(
@@ -181,6 +192,7 @@ const Planners = () => {
       {activeView === 'daily' ? (
         <DailyPlannerView
           events={eventsByDate[toDateKey(referenceDate)] ?? []}
+          holidays={holidaysByDate[toDateKey(referenceDate)] ?? []}
           referenceDate={referenceDate}
           onToggleEvent={handleToggleEvent}
         />
@@ -189,6 +201,7 @@ const Planners = () => {
       {activeView === 'weekly' ? (
         <WeeklyPlannerView
           eventsByDate={eventsByDate}
+          holidaysByDate={holidaysByDate}
           referenceDate={referenceDate}
           onToggleEvent={handleToggleEvent}
         />
@@ -197,6 +210,7 @@ const Planners = () => {
       {activeView === 'monthly' ? (
         <MonthlyPlannerView
           eventsByDate={eventsByDate}
+          holidaysByDate={holidaysByDate}
           referenceDate={referenceDate}
           onToggleEvent={handleToggleEvent}
         />

@@ -154,20 +154,21 @@ export class PlannerEventStorage {
 
   seedUserEvents(userId: number) {
     const snapshot = this.readSnapshot();
-
-    if (snapshot.seededUserIds.includes(userId)) {
-      return this.loadByUser(userId);
-    }
-
     const existingIds = new Set(snapshot.events.map((event) => event.id));
     const userSeedEvents = predefinedPlannerEvents.filter(
       (event) => event.userId === userId && !existingIds.has(event.id),
     );
 
+    if (!userSeedEvents.length && snapshot.seededUserIds.includes(userId)) {
+      return this.loadByUser(userId);
+    }
+
     this.writeSnapshot({
       ...snapshot,
       events: [...snapshot.events, ...userSeedEvents],
-      seededUserIds: [...snapshot.seededUserIds, userId],
+      seededUserIds: snapshot.seededUserIds.includes(userId)
+        ? snapshot.seededUserIds
+        : [...snapshot.seededUserIds, userId],
     });
 
     return this.loadByUser(userId);

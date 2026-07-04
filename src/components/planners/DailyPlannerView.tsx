@@ -1,17 +1,21 @@
 import type { PlannerEvent } from '../../models/PlannerEvent';
+import type { PublicHoliday } from '../../types/PublicHoliday';
 import { dayFormatter } from '../../utils/plannerDate';
 import { getPlannerEmptyMessage } from '../../utils/plannerEvents';
 import EmptyState from './EmptyState';
 import EventCard from './EventCard';
+import HolidayList from './HolidayList';
 
 interface DailyPlannerViewProps {
   events: PlannerEvent[];
+  holidays: PublicHoliday[];
   referenceDate: Date;
   onToggleEvent: (event: PlannerEvent) => void;
 }
 
 const DailyPlannerView = ({
   events,
+  holidays,
   referenceDate,
   onToggleEvent,
 }: DailyPlannerViewProps) => (
@@ -30,6 +34,8 @@ const DailyPlannerView = ({
       </span>
     </div>
 
+    <HolidayList holidays={holidays} />
+
     {events.length ? (
       <div className='space-y-3'>
         {events.map((event) => (
@@ -43,4 +49,3 @@ const DailyPlannerView = ({
 );
 
 export default DailyPlannerView;
-
