@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthProvider';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -29,10 +30,31 @@ function App() {
           }}
         />
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route
+            path='/'
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/login' element={<Login />} />
-          <Route path='/planners' element={<Planners />} />
-          <Route path='/stats' element={<Stats />} />
+          <Route
+            path='/planners'
+            element={
+              <ProtectedRoute>
+                <Planners />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/stats'
+            element={
+              <ProtectedRoute>
+                <Stats />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
