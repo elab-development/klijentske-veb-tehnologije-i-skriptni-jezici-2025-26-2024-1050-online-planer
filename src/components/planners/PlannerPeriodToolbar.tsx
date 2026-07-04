@@ -1,4 +1,4 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaPlus } from 'react-icons/fa';
 
 import { getPlannerTitle } from '../../utils/plannerDate';
 import type { PlannerView } from '../../utils/plannerTypes';
@@ -8,6 +8,7 @@ interface PlannerPeriodToolbarProps {
   completedEventsCount: number;
   referenceDate: Date;
   totalEventsCount: number;
+  onAddEvent: () => void;
   onMovePeriod: (direction: -1 | 1) => void;
   onToday: () => void;
 }
@@ -23,6 +24,7 @@ const PlannerPeriodToolbar = ({
   completedEventsCount,
   referenceDate,
   totalEventsCount,
+  onAddEvent,
   onMovePeriod,
   onToday,
 }: PlannerPeriodToolbarProps) => (
@@ -66,9 +68,17 @@ const PlannerPeriodToolbar = ({
       <div className='rounded-xl bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-500'>
         {completedEventsCount}/{totalEventsCount} završeno
       </div>
+
+      <button
+        type='button'
+        onClick={onAddEvent}
+        className='inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 px-4 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-300'
+      >
+        <FaPlus aria-hidden='true' />
+        Novi događaj
+      </button>
     </div>
   </section>
 );
 
 export default PlannerPeriodToolbar;
-

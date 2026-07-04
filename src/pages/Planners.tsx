@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 
+import AddEventModal, {
+  type AddEventFormValues,
+} from '../components/planners/AddEventModal';
 import CategoryFilterBar from '../components/planners/CategoryFilterBar';
 import DailyPlannerView from '../components/planners/DailyPlannerView';
 import MonthlyPlannerView from '../components/planners/MonthlyPlannerView';
@@ -18,6 +22,7 @@ import {
   getWeekDays,
   parseEventDate,
   startOfDay,
+  toDateTimeLocalValue,
   toDateKey,
 } from '../utils/plannerDate';
 import {
@@ -36,6 +41,7 @@ const Planners = () => {
   const [activeView, setActiveView] = useState<PlannerView>('weekly');
   const [activeCategory, setActiveCategory] =
     useState<EventCategoryFilter>('all');
+  const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false);
   const [events, setEvents] = useState<PlannerEvent[]>(() =>
     currentUser ? plannerEventStorage.seedUserEvents(currentUser.id) : [],
   );
@@ -166,6 +172,40 @@ const Planners = () => {
     setEvents(plannerEventStorage.loadByUser(currentUser.id));
   };
 
+  const handleCreateEvent = (values: AddEventFormValues) => {
+    if (!currentUser) {
+      return;
+    }
+
+    if (!values.title.trim() || !values.dateTime.trim()) {
+      toast.error('Unesite naziv, datum i vreme događaja.');
+      return;
+    }
+
+    try {
+      const createdEvent = plannerEventStorage.create({
+        userId: currentUser.id,
+        title: values.title,
+        dateTime: values.dateTime,
+        categoryId: values.categoryId,
+        note: values.note,
+      });
+
+      setEvents(plannerEventStorage.loadByUser(currentUser.id));
+      setReferenceDate(startOfDay(parseEventDate(createdEvent)));
+      if (activeCategory !== 'all' && activeCategory !== values.categoryId) {
+        setActiveCategory(values.categoryId);
+      }
+      setIsAddEventModalOpen(false);
+      toast.success('Događaj je dodat.');
+    } catch {
+      toast.error('Događaj nije dodat. Proverite unete podatke.');
+    }
+  };
+
+  const defaultCategoryId =
+    activeCategory === 'all' ? 'work' : activeCategory;
+
   return (
     <div className='space-y-6'>
       <PlannerViewTabs
@@ -179,6 +219,7 @@ const Planners = () => {
         completedEventsCount={completedEventsCount}
         referenceDate={referenceDate}
         totalEventsCount={visibleEvents.length}
+        onAddEvent={() => setIsAddEventModalOpen(true)}
         onMovePeriod={handleMovePeriod}
         onToday={handleToday}
       />
@@ -215,6 +256,14 @@ const Planners = () => {
           onToggleEvent={handleToggleEvent}
         />
       ) : null}
+
+      <AddEventModal
+        defaultCategoryId={defaultCategoryId}
+        defaultDateTime={toDateTimeLocalValue(referenceDate)}
+        isOpen={isAddEventModalOpen}
+        onClose={() => setIsAddEventModalOpen(false)}
+        onSubmit={handleCreateEvent}
+      />
     </div>
   );
 };

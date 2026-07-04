@@ -38,6 +38,9 @@ export const toDateKey = (date: Date) =>
     padDatePart(date.getDate()),
   ].join('-');
 
+export const toDateTimeLocalValue = (date: Date, time = '09:00') =>
+  `${toDateKey(date)}T${time}`;
+
 export const parseEventDate = (event: PlannerEvent) =>
   new Date(event.dateTime);
 
@@ -95,4 +98,3 @@ export const getPlannerTitle = (view: PlannerView, referenceDate: Date) => {
 
   return monthFormatter.format(referenceDate);
 };
-
