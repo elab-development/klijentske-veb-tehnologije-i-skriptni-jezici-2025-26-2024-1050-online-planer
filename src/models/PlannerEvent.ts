@@ -42,7 +42,7 @@ export class PlannerEvent {
       title: requireTitle(props.title),
       dateTime: requireValidDateTime(props.dateTime),
       note: props.note.trim(),
-      isCompleted: props.isCompleted,
+      isCompleted: props.isCompleted ?? false,
     };
 
     if (!isEventCategoryId(this.props.categoryId)) {
