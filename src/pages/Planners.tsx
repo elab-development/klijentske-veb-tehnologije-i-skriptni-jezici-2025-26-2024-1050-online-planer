@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 
-import CategoryLegend from '../components/planners/CategoryLegend';
+import CategoryFilterBar from '../components/planners/CategoryFilterBar';
 import DailyPlannerView from '../components/planners/DailyPlannerView';
 import MonthlyPlannerView from '../components/planners/MonthlyPlannerView';
 import PlannerPeriodToolbar from '../components/planners/PlannerPeriodToolbar';
 import PlannerViewTabs from '../components/planners/PlannerViewTabs';
 import WeeklyPlannerView from '../components/planners/WeeklyPlannerView';
 import { useAuth } from '../contexts/useAuth';
+import { eventCategoryIds } from '../data/eventCategories';
 import type { PlannerEvent } from '../models/PlannerEvent';
 import { plannerEventStorage } from '../services/PlannerEventStorage';
 import {
@@ -18,15 +19,21 @@ import {
   toDateKey,
 } from '../utils/plannerDate';
 import {
+  filterEventsByCategory,
   getEventsByDate,
   getInitialReferenceDate,
   getVisibleDates,
 } from '../utils/plannerEvents';
-import type { PlannerView } from '../utils/plannerTypes';
+import type {
+  EventCategoryFilter,
+  PlannerView,
+} from '../utils/plannerTypes';
 
 const Planners = () => {
   const { currentUser } = useAuth();
   const [activeView, setActiveView] = useState<PlannerView>('weekly');
+  const [activeCategory, setActiveCategory] =
+    useState<EventCategoryFilter>('all');
   const [events, setEvents] = useState<PlannerEvent[]>(() =>
     currentUser ? plannerEventStorage.seedUserEvents(currentUser.id) : [],
   );
@@ -35,8 +42,6 @@ const Planners = () => {
       currentUser ? plannerEventStorage.loadByUser(currentUser.id) : [],
     ),
   );
-
-  const eventsByDate = useMemo(() => getEventsByDate(events), [events]);
 
   const visibleDates = useMemo(
     () => getVisibleDates(activeView, referenceDate),
@@ -48,12 +53,51 @@ const Planners = () => {
     [visibleDates],
   );
 
-  const visibleEvents = useMemo(
+  const visibleEventsWithoutCategoryFilter = useMemo(
     () =>
       events.filter((event) =>
         visibleDateKeys.has(toDateKey(parseEventDate(event))),
       ),
     [events, visibleDateKeys],
+  );
+
+  const filteredEvents = useMemo(
+    () => filterEventsByCategory(events, activeCategory),
+    [activeCategory, events],
+  );
+
+  const eventsByDate = useMemo(
+    () => getEventsByDate(filteredEvents),
+    [filteredEvents],
+  );
+
+  const visibleEvents = useMemo(
+    () =>
+      filteredEvents.filter((event) =>
+        visibleDateKeys.has(toDateKey(parseEventDate(event))),
+      ),
+    [filteredEvents, visibleDateKeys],
+  );
+
+  const categoryCounts = useMemo(
+    () =>
+      eventCategoryIds.reduce<Record<EventCategoryFilter, number>>(
+        (counts, categoryId) => ({
+          ...counts,
+          [categoryId]: visibleEventsWithoutCategoryFilter.filter(
+            (event) => event.categoryId === categoryId,
+          ).length,
+        }),
+        {
+          all: visibleEventsWithoutCategoryFilter.length,
+          work: 0,
+          personal: 0,
+          health: 0,
+          study: 0,
+          social: 0,
+        },
+      ),
+    [visibleEventsWithoutCategoryFilter],
   );
 
   const viewEventCounts = useMemo<Record<PlannerView, number>>(
@@ -128,7 +172,11 @@ const Planners = () => {
         onToday={handleToday}
       />
 
-      <CategoryLegend />
+      <CategoryFilterBar
+        activeCategory={activeCategory}
+        counts={categoryCounts}
+        onChange={setActiveCategory}
+      />
 
       {activeView === 'daily' ? (
         <DailyPlannerView

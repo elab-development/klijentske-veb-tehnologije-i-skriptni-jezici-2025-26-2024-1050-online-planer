@@ -6,7 +6,11 @@ import {
   startOfDay,
   toDateKey,
 } from './plannerDate';
-import type { EventsByDate, PlannerView } from './plannerTypes';
+import type {
+  EventCategoryFilter,
+  EventsByDate,
+  PlannerView,
+} from './plannerTypes';
 
 export const getInitialReferenceDate = (events: PlannerEvent[]) => {
   const today = startOfDay(new Date());
@@ -31,6 +35,17 @@ export const getEventsByDate = (events: PlannerEvent[]) =>
       [dateKey]: [...(groups[dateKey] ?? []), event],
     };
   }, {});
+
+export const filterEventsByCategory = (
+  events: PlannerEvent[],
+  categoryFilter: EventCategoryFilter,
+) => {
+  if (categoryFilter === 'all') {
+    return events;
+  }
+
+  return events.filter((event) => event.categoryId === categoryFilter);
+};
 
 export const getVisibleDates = (view: PlannerView, referenceDate: Date) => {
   if (view === 'daily') {
@@ -57,4 +72,3 @@ export const getPlannerEmptyMessage = (view: PlannerView) => {
 
   return 'Nema događaja za ovaj mesec.';
 };
-
