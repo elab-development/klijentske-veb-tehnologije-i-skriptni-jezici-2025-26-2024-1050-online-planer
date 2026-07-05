@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthProvider';
 import Home from './pages/Home';
+import Focus from './pages/Focus';
 import Login from './pages/Login';
 import Planners from './pages/Planners';
 import Stats from './pages/Stats';
@@ -44,6 +45,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Planners />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/focus'
+            element={
+              <ProtectedRoute>
+                <Focus />
               </ProtectedRoute>
             }
           />

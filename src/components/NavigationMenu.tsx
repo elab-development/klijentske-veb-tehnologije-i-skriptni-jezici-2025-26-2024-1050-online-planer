@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   FaCalendarCheck,
   FaChartBar,
+  FaBullseye,
   FaHome,
   FaSignOutAlt,
   FaThLarge,
@@ -21,6 +22,11 @@ const navItems = [
     label: 'Planeri',
     to: '/planners',
     icon: FaThLarge,
+  },
+  {
+    label: 'Fokus',
+    to: '/focus',
+    icon: FaBullseye,
   },
   {
     label: 'Statistika',

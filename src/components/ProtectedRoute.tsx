@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 const pageTitles: Record<string, string> = {
   '/': 'Početna',
   '/planners': 'Planeri',
+  '/focus': 'Fokus',
   '/stats': 'Statistika',
 };
 
