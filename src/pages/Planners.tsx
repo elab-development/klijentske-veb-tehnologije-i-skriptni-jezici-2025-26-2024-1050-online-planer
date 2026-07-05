@@ -13,6 +13,7 @@ import WeeklyPlannerView from '../components/planners/WeeklyPlannerView';
 import { useAuth } from '../contexts/useAuth';
 import { eventCategoryIds } from '../data/eventCategories';
 import { usePublicHolidays } from '../hooks/usePublicHolidays';
+import { useWeatherForecast } from '../hooks/useWeatherForecast';
 import type { PlannerEvent } from '../models/PlannerEvent';
 import { plannerEventStorage } from '../services/PlannerEventStorage';
 import { getHolidaysByDate, getHolidayYears } from '../utils/holidayUtils';
@@ -65,6 +66,7 @@ const Planners = () => {
     [visibleDates],
   );
   const holidays = usePublicHolidays(visibleHolidayYears);
+  const weatherForecastsByDate = useWeatherForecast(visibleDates);
   const holidaysByDate = useMemo(
     () => getHolidaysByDate(holidays),
     [holidays],
@@ -235,6 +237,7 @@ const Planners = () => {
           events={eventsByDate[toDateKey(referenceDate)] ?? []}
           holidays={holidaysByDate[toDateKey(referenceDate)] ?? []}
           referenceDate={referenceDate}
+          weatherForecast={weatherForecastsByDate[toDateKey(referenceDate)]}
           onToggleEvent={handleToggleEvent}
         />
       ) : null}
@@ -244,6 +247,7 @@ const Planners = () => {
           eventsByDate={eventsByDate}
           holidaysByDate={holidaysByDate}
           referenceDate={referenceDate}
+          weatherForecastsByDate={weatherForecastsByDate}
           onToggleEvent={handleToggleEvent}
         />
       ) : null}
@@ -253,6 +257,7 @@ const Planners = () => {
           eventsByDate={eventsByDate}
           holidaysByDate={holidaysByDate}
           referenceDate={referenceDate}
+          weatherForecastsByDate={weatherForecastsByDate}
           onToggleEvent={handleToggleEvent}
         />
       ) : null}

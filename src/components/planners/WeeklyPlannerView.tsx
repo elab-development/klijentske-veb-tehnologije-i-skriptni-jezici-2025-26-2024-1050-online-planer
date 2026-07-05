@@ -1,4 +1,5 @@
 import type { PlannerEvent } from '../../models/PlannerEvent';
+import type { WeatherForecastsByDate } from '../../types/WeatherForecast';
 import type { HolidaysByDate } from '../../utils/holidayUtils';
 import {
   getWeekDays,
@@ -8,11 +9,13 @@ import {
 import type { EventsByDate } from '../../utils/plannerTypes';
 import EventCard from './EventCard';
 import HolidayList from './HolidayList';
+import WeatherForecastBadge from './WeatherForecastBadge';
 
 interface WeeklyPlannerViewProps {
   eventsByDate: EventsByDate;
   holidaysByDate: HolidaysByDate;
   referenceDate: Date;
+  weatherForecastsByDate: WeatherForecastsByDate;
   onToggleEvent: (event: PlannerEvent) => void;
 }
 
@@ -20,6 +23,7 @@ const WeeklyPlannerView = ({
   eventsByDate,
   holidaysByDate,
   referenceDate,
+  weatherForecastsByDate,
   onToggleEvent,
 }: WeeklyPlannerViewProps) => {
   const weekDays = getWeekDays(referenceDate);
@@ -31,6 +35,7 @@ const WeeklyPlannerView = ({
         const dateKey = toDateKey(date);
         const dayEvents = eventsByDate[dateKey] ?? [];
         const dayHolidays = holidaysByDate[dateKey] ?? [];
+        const dayWeatherForecast = weatherForecastsByDate[dateKey];
         const isToday = dateKey === todayKey;
 
         return (
@@ -58,6 +63,7 @@ const WeeklyPlannerView = ({
             </header>
 
             <HolidayList compact holidays={dayHolidays} />
+            <WeatherForecastBadge compact forecast={dayWeatherForecast} />
 
             {dayEvents.length ? (
               <div className='mt-3 space-y-3'>

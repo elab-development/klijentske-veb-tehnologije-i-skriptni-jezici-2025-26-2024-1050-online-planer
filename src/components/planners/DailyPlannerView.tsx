@@ -1,15 +1,18 @@
 import type { PlannerEvent } from '../../models/PlannerEvent';
 import type { PublicHoliday } from '../../types/PublicHoliday';
+import type { WeatherForecast } from '../../types/WeatherForecast';
 import { dayFormatter } from '../../utils/plannerDate';
 import { getPlannerEmptyMessage } from '../../utils/plannerEvents';
 import EmptyState from './EmptyState';
 import EventCard from './EventCard';
 import HolidayList from './HolidayList';
+import WeatherForecastBadge from './WeatherForecastBadge';
 
 interface DailyPlannerViewProps {
   events: PlannerEvent[];
   holidays: PublicHoliday[];
   referenceDate: Date;
+  weatherForecast?: WeatherForecast;
   onToggleEvent: (event: PlannerEvent) => void;
 }
 
@@ -17,6 +20,7 @@ const DailyPlannerView = ({
   events,
   holidays,
   referenceDate,
+  weatherForecast,
   onToggleEvent,
 }: DailyPlannerViewProps) => (
   <section className='rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(99,102,241,0.08)]'>
@@ -35,6 +39,7 @@ const DailyPlannerView = ({
     </div>
 
     <HolidayList holidays={holidays} />
+    <WeatherForecastBadge forecast={weatherForecast} />
 
     {events.length ? (
       <div className='space-y-3'>
