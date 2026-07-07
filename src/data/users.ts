@@ -3,9 +3,9 @@ import type { User } from '../types/User';
 export const predefinedUsers: User[] = [
   {
     id: 1,
-    name: 'Nikola Petrović',
-    email: 'nikola@planit.com',
-    password: 'nikola123',
+    name: 'DjokerNole',
+    email: 'djoker@planit.com',
+    password: 'djoker777',
   },
   {
     id: 2,
